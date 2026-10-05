@@ -1,27 +1,29 @@
-### 📌 Opción elegida
-
 # Parcial - Lista de compras inteligente
 
-# Alumno: Juan Ignacio Martinez
+**Alumno:** Juan Ignacio Martinez
 
----
+### 📌 Opción elegida
 
-# Estructura del Proyecto
+Elegí desarrollar la **Lista de compras inteligente**.
 
+## Estructura del Proyecto
+
+```text
 ├── src/
-│ ├── components/
-│ │ └── ModalAgregar.tsx
-│ ├── context/
-│ │ └── ContextoAutenticacion.tsx
-│ ├── hooks/
-│ │ └── usarListaCompras.ts
-│ ├── screens/
-│ │ ├── PantallaLogin.tsx
-│ │ └── PantallaPrincipal.tsx
-│ └── utils/
-│ ├── **tests**/
-│ │ └── validadores.test.ts
-│ └── validadores.ts
+│   ├── components/
+│   │   └── ModalAgregar.tsx
+│   ├── context/
+│   │   └── ContextoAutenticacion.tsx
+│   ├── hooks/
+│   │   └── usarListaCompras.ts
+│   ├── screens/
+│   │   ├── PantallaLogin.tsx
+│   │   └── PantallaPrincipal.tsx
+│   └── utils/
+│       ├── __tests__/
+│       │   └── validadores.test.ts
+│       └── validadores.ts
+```
 
 ## Vista Previa del test
 
