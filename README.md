@@ -27,7 +27,7 @@ Elegí desarrollar la **Lista de compras inteligente**.
 
 ## Vista Previa del test
 
-![test](/assets/test.jpg)
+![test](assets/images/test.jpg)
 
 ## Cómo ejecutar la app
 
