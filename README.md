@@ -1,12 +1,12 @@
-# Parcial - Lista de compras inteligente
+# 📱 Parcia2 - Lista de compras inteligente
 
-**Alumno:** Juan Ignacio Martinez
+**Alumno:** Juan Ignacio Martinez (ISTEA)
 
 ### 📌 Opción elegida
 
-Elegí desarrollar la **Lista de compras inteligente**.
+---
 
-## Estructura del Proyecto
+## 📂 Estructura del Proyecto
 
 ```text
 ├── src/
@@ -14,8 +14,10 @@ Elegí desarrollar la **Lista de compras inteligente**.
 │   │   └── ModalAgregar.tsx
 │   ├── context/
 │   │   └── ContextoAutenticacion.tsx
-│   ├── hooks/
-│   │   └── usarListaCompras.ts
+│   ├── redux/
+│   │   ├── slices/
+│   │   │   └── comprasSlice.ts
+│   │   └── store.ts
 │   ├── screens/
 │   │   ├── PantallaLogin.tsx
 │   │   └── PantallaPrincipal.tsx
@@ -23,25 +25,22 @@ Elegí desarrollar la **Lista de compras inteligente**.
 │       ├── __tests__/
 │       │   └── validadores.test.ts
 │       └── validadores.ts
+├── App.tsx
 ```
 
-## Vista Previa del test
+## 🖼️ Vista Previa del test
 
 ![test](assets/images/test.jpg)
 
-## Cómo ejecutar la app
-
-1. Para arrancar: `npm install` y luego `npx expo start`
-2. Para correr los tests: `npm test`
-
-## Funcionalidades implementadas
+## 🚀 Funcionalidades implementadas
 
 - **Login y Registro:** Validé el formato del correo y que la clave tenga al menos 8 caracteres. Sin cuenta no se puede entrar.
-- **Guardado :** Cada usuario tiene su lista privada y no se borra al cerrar la app.
-- **Lista de compras:** Podés agregar productos y borrarlos tocando la "X".
-- **Notificaciones:** Cuando agregás algo, al segundo te llega un aviso.
-- **Diseño:** Armé una interfaz simple y usé un Modal para agregar cosas rápido sin cambiar de pantalla.
+- **Estado Global (Redux Toolkit):** Centralización del estado con un `store` global y un `comprasSlice` para agregar, eliminar y actualizar productos.
+- **Cámara y Galería:** Uso de `expo-image-picker` para sacar fotos en vivo o elegir de la galería y adjuntarlas a la compra.
+- **Geolocalización:** Uso de `expo-location` para capturar la ubicación de forma obligatoria al guardar un nuevo producto.
+- **Calendario Nativo:** Uso de `expo-calendar` para crear un evento automático en el celular como recordatorio de la compra.
+- **Agenda de Contactos:** Uso de `expo-contacts` para abrir la agenda del celular y asignarle un proveedor a cada producto.
 
-## Video DEMO
+## 🎥 Video DEMO
 
-[Enlace Video DEMO de la app en youtube.](https://www.youtube.com/watch?v=yNs6xG67alY)
+[Enlace Video DEMO de la app en YouTube](https://www.youtube.com/watch?v=yNs6xG67alY)

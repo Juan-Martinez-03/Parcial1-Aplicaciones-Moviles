@@ -1,4 +1,7 @@
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Provider } from "react-redux";
+import { store } from "./src/redux/store";
+
 import {
   ProveedorAutenticacion,
   usarAutenticacion,
@@ -14,10 +17,12 @@ function NavegacionPrincipal() {
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <ProveedorAutenticacion>
-        <NavegacionPrincipal />
-      </ProveedorAutenticacion>
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <SafeAreaProvider>
+        <ProveedorAutenticacion>
+          <NavegacionPrincipal />
+        </ProveedorAutenticacion>
+      </SafeAreaProvider>
+    </Provider>
   );
 }

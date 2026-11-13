@@ -1,8 +1,9 @@
+import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import {
-  KeyboardAvoidingView,
+  Alert,
+  Image,
   Modal,
-  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -10,70 +11,144 @@ import {
   View,
 } from "react-native";
 
-interface Propiedades {
+interface PropsModal {
   esVisible: boolean;
   funcionParaCerrar: () => void;
-  funcionParaGuardar: (textoEscrito: string) => void;
+  funcionParaGuardar: (nombre: string, foto?: string) => void;
 }
 
 export default function ModalAgregar({
   esVisible,
   funcionParaCerrar,
   funcionParaGuardar,
-}: Propiedades) {
-  const [textoIngresado, setTextoIngresado] = useState("");
+}: PropsModal) {
+  const [nombreProducto, setNombreProducto] = useState("");
+  const [fotoTemporal, setFotoTemporal] = useState<string | undefined>(
+    undefined,
+  );
 
-  const botonGuardarApretado = () => {
-    if (textoIngresado.trim()) {
-      funcionParaGuardar(textoIngresado);
-      setTextoIngresado("");
-      funcionParaCerrar();
+  const sacarFotoConCamara = async () => {
+    const permisos = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (!permisos.granted) {
+      Alert.alert(
+        "Permiso denegado",
+        "Necesitamos permiso para usar la cámara.",
+      );
+      return;
+    }
+
+    const resultado = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.5,
+    });
+
+    if (!resultado.canceled) {
+      setFotoTemporal(resultado.assets[0].uri);
     }
   };
 
+  const elegirFotoDeGaleria = async () => {
+    const permisos = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permisos.granted) {
+      Alert.alert(
+        "Permiso denegado",
+        "Necesitamos permiso para ver tus fotos.",
+      );
+      return;
+    }
+
+    const resultado = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.5,
+    });
+
+    if (!resultado.canceled) {
+      setFotoTemporal(resultado.assets[0].uri);
+    }
+  };
+
+  const apretarGuardar = () => {
+    if (nombreProducto.trim() === "") {
+      Alert.alert("Error", "El nombre del producto no puede estar vacío.");
+      return;
+    }
+
+    funcionParaGuardar(nombreProducto, fotoTemporal);
+
+    setNombreProducto("");
+    setFotoTemporal(undefined);
+    funcionParaCerrar();
+  };
+
+  const apretarCancelar = () => {
+    setNombreProducto("");
+    setFotoTemporal(undefined);
+    funcionParaCerrar();
+  };
+
   return (
-    <Modal visible={esVisible} transparent animationType="slide">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={estilos.fondoOscuro}
-      >
-        <TouchableOpacity
-          style={estilos.areaCierre}
-          activeOpacity={1}
-          onPress={funcionParaCerrar}
-        />
-
-        <View style={estilos.cajaInferior}>
-          <View style={estilos.indicadorArrastre}></View>
-
-          <Text style={estilos.titulo}>Agregar productos</Text>
+    <Modal visible={esVisible} animationType="slide" transparent={true}>
+      <View style={estilos.fondoOscuro}>
+        <View style={estilos.cajaBlanca}>
+          <Text style={estilos.titulo}>Nuevo Producto</Text>
 
           <TextInput
-            style={estilos.cajaDeTexto}
-            placeholder="Ej: Yerba, Café, Galletitas..."
-            placeholderTextColor="#94a3b8"
-            value={textoIngresado}
-            onChangeText={setTextoIngresado}
-            autoFocus
+            style={estilos.input}
+            placeholder="Ej: Fideos, Yerba..."
+            value={nombreProducto}
+            onChangeText={setNombreProducto}
           />
 
-          <View style={estilos.filaBotones}>
+          <View style={estilos.cajaBotonesFoto}>
             <TouchableOpacity
-              onPress={funcionParaCerrar}
-              style={[estilos.botonGeneral, estilos.botonCancelar]}
+              onPress={sacarFotoConCamara}
+              style={estilos.botonFotoCamara}
+              activeOpacity={0.8}
             >
-              <Text style={estilos.textoOscuro}>Volver</Text>
+              <Text style={estilos.textoBotonFoto}>📷 Cámara</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={botonGuardarApretado}
-              style={[estilos.botonGeneral, estilos.botonGuardar]}
+              onPress={elegirFotoDeGaleria}
+              style={estilos.botonFotoGaleria}
+              activeOpacity={0.8}
             >
-              <Text style={estilos.textoBlanco}>Sumar al carrito</Text>
+              <Text style={estilos.textoBotonFoto}>🖼️ Galería</Text>
+            </TouchableOpacity>
+          </View>
+
+          {fotoTemporal && (
+            <Image
+              source={{ uri: fotoTemporal }}
+              style={estilos.vistaPreviaFoto}
+            />
+          )}
+
+          <View style={estilos.cajaBotonesAccion}>
+            <TouchableOpacity
+              onPress={apretarCancelar}
+              style={estilos.botonCancelar}
+              activeOpacity={0.8}
+            >
+              <Text style={estilos.textoBotonAccion}>Cancelar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={apretarGuardar}
+              style={estilos.botonGuardar}
+              activeOpacity={0.8}
+            >
+              <Text style={estilos.textoBotonAccion}>Guardar</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }
@@ -81,72 +156,77 @@ export default function ModalAgregar({
 const estilos = StyleSheet.create({
   fondoOscuro: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    justifyContent: "flex-end",
-  },
-  areaCierre: {
-    flex: 1,
-  },
-  cajaInferior: {
-    backgroundColor: "white",
-    padding: 25,
-    paddingBottom: 40,
-    elevation: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-  },
-  indicadorArrastre: {
-    width: 45,
-    height: 5,
-    backgroundColor: "#cbd5e1",
-    borderRadius: 5,
-    alignSelf: "center",
-    marginBottom: 20,
-  },
-  titulo: {
-    fontSize: 22,
-    fontWeight: "800",
-    color: "#0f172a",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  cajaDeTexto: {
-    backgroundColor: "#f1f5f9",
-    borderRadius: 15,
-    padding: 18,
-    fontSize: 16,
-    color: "#334155",
-    marginBottom: 25,
-  },
-  filaBotones: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 15,
-  },
-  botonGeneral: {
-    flex: 1,
-    paddingVertical: 16,
-    borderRadius: 15,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
     alignItems: "center",
   },
-  botonCancelar: {
-    backgroundColor: "#f8fafc",
+  cajaBlanca: {
+    width: "85%",
+    backgroundColor: "white",
+    borderRadius: 15,
+    padding: 20,
+    elevation: 5,
+  },
+  titulo: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#1e293b",
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  input: {
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#cbd5e1",
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  cajaBotonesFoto: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 15,
+  },
+  botonFotoCamara: {
+    flex: 1,
+    backgroundColor: "#0284c7",
+    padding: 12,
+    borderRadius: 8,
+    marginRight: 5,
+    alignItems: "center",
+  },
+  botonFotoGaleria: {
+    flex: 1,
+    backgroundColor: "#64748b",
+    padding: 12,
+    borderRadius: 8,
+    marginLeft: 5,
+    alignItems: "center",
+  },
+  textoBotonFoto: { color: "white", fontWeight: "bold", fontSize: 14 },
+  vistaPreviaFoto: {
+    width: "100%",
+    height: 150,
+    borderRadius: 8,
+    marginBottom: 20,
+    resizeMode: "cover",
+  },
+  cajaBotonesAccion: { flexDirection: "row", justifyContent: "space-between" },
+  botonCancelar: {
+    flex: 1,
+    padding: 15,
+    backgroundColor: "#ef4444",
+    borderRadius: 8,
+    marginRight: 5,
+    alignItems: "center",
   },
   botonGuardar: {
-    backgroundColor: "#1a0eff",
+    flex: 1,
+    padding: 15,
+    backgroundColor: "#10b981",
+    borderRadius: 8,
+    marginLeft: 5,
+    alignItems: "center",
   },
-  textoOscuro: {
-    fontWeight: "700",
-    color: "#8db5ec",
-    fontSize: 15,
-  },
-  textoBlanco: {
-    fontWeight: "700",
-    color: "white",
-    fontSize: 15,
-  },
+  textoBotonAccion: { color: "white", fontWeight: "bold", fontSize: 16 },
 });
